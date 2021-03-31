@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_todo/edit_component.dart';
+import 'package:flutter_todo/repository.dart';
 import 'package:flutter_todo/todo.dart';
 
 class TodoListPage extends StatefulWidget {
+  final TodoRepository repository;
+  TodoListPage(this.repository);
   @override
   _TodoListPageState createState() => _TodoListPageState();
 }
@@ -13,6 +16,28 @@ class _TodoListPageState extends State<TodoListPage> {
     Todo(title: "ふが"),
     Todo(title: "ぴよ"),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    widget.repository.loadAllTodo().then((todos) => setState(() {
+      _todos = todos;
+    }));
+  }
+
+  void _replaceTodo(int index, Todo newTodo) {
+    setState(() {
+      _todos[index] = newTodo;
+    });
+    widget.repository.saveAllTodo(_todos);
+  }
+
+  void _appendTodo(Todo newTodo) {
+    setState(() {
+      _todos.add(newTodo);
+    });
+    widget.repository.saveAllTodo(_todos);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,17 +52,16 @@ class _TodoListPageState extends State<TodoListPage> {
             trailing: Checkbox(
               value: todo.done,
               onChanged: (checked) {
-                setState(() {
-                  _todos[index] = Todo(title: todo.title, done: checked ?? false);
-                });
+                _replaceTodo(
+                  index,
+                  Todo(title: todo.title, done: checked ?? false),
+                );
               },
             ),
             onLongPress: () async {
               final result = await EditDialog.show(context, todo);
               if (result != null) {
-                setState(() {
-                  _todos[index] = result;
-                });
+                _replaceTodo(index, result);
               }
             },
           );
@@ -48,9 +72,7 @@ class _TodoListPageState extends State<TodoListPage> {
         onPressed: () async {
           final result = await EditDialog.show(context);
           if (result != null) {
-            setState(() {
-              _todos.add(result);
-            });
+            _appendTodo(result);
           }
         },
       ),
