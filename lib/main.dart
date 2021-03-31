@@ -23,7 +23,12 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: TodoListPage(),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('To Do'),
+        ),
+        body: TodoListPage(),
+      ),
     );
   }
 }
