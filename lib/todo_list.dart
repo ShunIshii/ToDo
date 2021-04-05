@@ -46,6 +46,15 @@ class _TodoListPageState extends State<TodoListPage> {
     widget.repository.saveAllTodo(_todos);
   }
 
+  bool _validateTodo(Todo todo) {
+    if (todo.title == '') {
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,7 +77,12 @@ class _TodoListPageState extends State<TodoListPage> {
             onLongPress: () async {
               final result = await EditDialog.show(context, todo);
               if (result != null) {
-                _replaceTodo(index, result);
+                if (result['operation'] == 'save' && _validateTodo(result['content'])) {
+                  _replaceTodo(index, result['content']);
+                }
+                else if (result['operation'] == 'delete') {
+                  _deleteTodo(index);
+                }
               }
             },
           );
@@ -78,8 +92,8 @@ class _TodoListPageState extends State<TodoListPage> {
         child: Icon(Icons.add),
         onPressed: () async {
           final result = await EditDialog.show(context);
-          if (result != null) {
-            _appendTodo(result);
+          if (result != null && _validateTodo(result['content'])) {
+            _appendTodo(result['content']);
           }
         },
       ),
