@@ -40,6 +40,18 @@ class _EditDialogState extends State<EditDialog> {
               Todo(title: _textEditingController.text),
             );
           },
+          child: Text('削除'),
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(
+              context,
+              Todo(title: _textEditingController.text),
+            );
+          },
           child: Text('保存'),
         ),
       ],

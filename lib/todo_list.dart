@@ -39,6 +39,13 @@ class _TodoListPageState extends State<TodoListPage> {
     widget.repository.saveAllTodo(_todos);
   }
 
+  void _deleteTodo(int index) {
+    setState(() {
+      _todos.removeAt(index);
+    });
+    widget.repository.saveAllTodo(_todos);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
