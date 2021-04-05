@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_todo/todo.dart';
 
 class EditDialog extends StatefulWidget {
-  static Future<Todo?> show(BuildContext context, [Todo? base]) {
+  static Future show(BuildContext context, [Todo? base]) {
     return showDialog(
       context: context,
       builder: (context) => EditDialog(base: base),
@@ -35,9 +35,27 @@ class _EditDialogState extends State<EditDialog> {
       actions: [
         ElevatedButton(
           onPressed: () {
+            var result = Map();
+            result['operation'] = 'delete';
+            result['content'] = Todo(title: '');
             Navigator.pop(
               context,
-              Todo(title: _textEditingController.text),
+              result,
+            );
+          },
+          child: Text('削除'),
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            var result = Map();
+            result['operation'] = 'save';
+            result['content'] = Todo(title: _textEditingController.text);
+            Navigator.pop(
+              context,
+              result,
             );
           },
           child: Text('保存'),
