@@ -11,11 +11,7 @@ class TodoListPage extends StatefulWidget {
 }
 
 class _TodoListPageState extends State<TodoListPage> {
-  List<Todo> _todos = [
-    Todo(title: "ほげ"),
-    Todo(title: "ふが"),
-    Todo(title: "ぴよ"),
-  ];
+  List<Todo> _todos = [];
 
   @override
   void initState() {
@@ -64,7 +60,7 @@ class _TodoListPageState extends State<TodoListPage> {
           final todo = _todos[index];
 
           return ListTile(
-            title: Text(todo.title),
+            title: (!todo.done) ? Text(todo.title) : Text(todo.title, style: TextStyle(decoration: TextDecoration.lineThrough),), // 完了したタスクには文字列に取り消し線が入る
             trailing: Checkbox(
               value: todo.done,
               onChanged: (checked) {
@@ -72,6 +68,12 @@ class _TodoListPageState extends State<TodoListPage> {
                   index,
                   Todo(title: todo.title, done: checked ?? false),
                 );
+                if (!todo.done) {
+                  _todos.add(_todos.removeAt(index));
+                }
+                else {
+                  _todos.insert(0, _todos.removeAt(index));
+                }
               },
             ),
             onLongPress: () async {
@@ -79,6 +81,7 @@ class _TodoListPageState extends State<TodoListPage> {
               if (result != null) {
                 if (result['operation'] == 'save' && _validateTodo(result['content'])) {
                   _replaceTodo(index, result['content']);
+                  result['content'].done = todo.done; // 編集前のチェック状態を反映させる
                 }
                 else if (result['operation'] == 'delete') {
                   _deleteTodo(index);
