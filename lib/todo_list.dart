@@ -30,7 +30,7 @@ class _TodoListPageState extends State<TodoListPage> {
 
   void _appendTodo(Todo newTodo) {
     setState(() {
-      _todos.add(newTodo);
+      _todos.insert(0, newTodo);
     });
     widget.repository.saveAllTodo(_todos);
   }
