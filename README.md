@@ -12,4 +12,4 @@ This is [Flutter](https://flutter.dev/) application which can build for mobile, 
 
 ## Reference
 
-This project refer to the [hands-on documentation](https://kikuchy.github.io/flutter_nullsafe_todo_sample/).
+This project refer to the [hands-on documentation](https://kikuchy.github.io/flutter_nullsafe_todo_sample/) and [Flutter Doc JP](https://flutter.ctrnost.com/).
