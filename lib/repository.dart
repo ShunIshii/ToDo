@@ -1,18 +1,18 @@
 import 'dart:convert';
 
-import 'package:flutter_todo/todo.dart';
+import 'package:flutter_todo/task.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class TodoRepository {
-  Future<List<Todo>> loadAllTodo() async {
+class TaskRepository {
+  Future<List<Task>> loadAllTask() async {
     final pref = await SharedPreferences.getInstance();
-    final raw = pref.getString("todos");
+    final raw = pref.getString("tasks");
     if (raw != null) {
       final decoded = json.decode(raw) as List;
       return decoded
           .cast<Map<String, dynamic>>()
           .map(
-            (e) => Todo(
+            (e) => Task(
           title: e["title"],
           done: e["done"],
         ),
@@ -22,15 +22,15 @@ class TodoRepository {
     return [];
   }
 
-  Future<void> saveAllTodo(List<Todo> todos) async {
+  Future<void> saveAllTask(List<Task> tasks) async {
     final pref = await SharedPreferences.getInstance();
-    final values = todos
+    final values = tasks
         .map((e) => {
       "title": e.title,
       "done": e.done,
     })
         .toList();
     final raw = json.encode(values);
-    await pref.setString("todos", raw);
+    await pref.setString("tasks", raw);
   }
 }
