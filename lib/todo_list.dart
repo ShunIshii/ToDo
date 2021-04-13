@@ -30,7 +30,7 @@ class _TodoListPageState extends State<TodoListPage> {
 
   void _appendTask(Task newTask) {
     setState(() {
-      _tasks.insert(0, newTask);
+      _tasks.add(newTask);
     });
     widget.repository.saveAllTask(_tasks);
   }
@@ -53,11 +53,25 @@ class _TodoListPageState extends State<TodoListPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    // sort tasks
+    var doTaskIDs = [];
+    var doneTaskIDs = [];
+    _tasks.asMap().forEach((int i, Task task) {
+      if (task.done) {
+        doneTaskIDs.add(i);
+      }
+      else {
+        doTaskIDs.add(i);
+      }
+    });
+    final sortedTaskIDs = doTaskIDs + doneTaskIDs;
+
     return Scaffold(
       body: ListView.builder(
-        itemCount: _tasks.length,
+        itemCount: sortedTaskIDs.length,
         itemBuilder: (context, index) {
-          final task = _tasks[index];
+          final task = _tasks[sortedTaskIDs[index]];
 
           return ListTile(
             title: (!task.done) ? Text(task.title) : Text(task.title, style: TextStyle(decoration: TextDecoration.lineThrough),), // 完了したタスクには文字列に取り消し線が入る
@@ -65,26 +79,20 @@ class _TodoListPageState extends State<TodoListPage> {
               value: task.done,
               onChanged: (checked) {
                 _replaceTask(
-                  index,
+                  sortedTaskIDs[index],
                   Task(title: task.title, done: checked ?? false),
                 );
-                if (!task.done) {
-                  _tasks.add(_tasks.removeAt(index));
-                }
-                else {
-                  _tasks.insert(0, _tasks.removeAt(index));
-                }
               },
             ),
             onLongPress: () async {
               final result = await EditDialog.show(context, task);
               if (result != null) {
                 if (result['operation'] == 'save' && _validateTask(result['content'])) {
-                  _replaceTask(index, result['content']);
+                  _replaceTask(sortedTaskIDs[index], result['content']);
                   result['content'].done = task.done; // 編集前のチェック状態を反映させる
                 }
                 else if (result['operation'] == 'delete') {
-                  _deleteTask(index);
+                  _deleteTask(sortedTaskIDs[index]);
                 }
               }
             },
