@@ -1,49 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_todo/edit_component.dart';
 import 'package:flutter_todo/repository.dart';
-import 'package:flutter_todo/todo.dart';
+import 'package:flutter_todo/task.dart';
 
 class TodoListPage extends StatefulWidget {
-  final TodoRepository repository;
+  final TaskRepository repository;
   TodoListPage(this.repository);
   @override
   _TodoListPageState createState() => _TodoListPageState();
 }
 
 class _TodoListPageState extends State<TodoListPage> {
-  List<Todo> _todos = [];
+  List<Task> _tasks = [];
 
   @override
   void initState() {
     super.initState();
-    widget.repository.loadAllTodo().then((todos) => setState(() {
-      _todos = todos;
+    widget.repository.loadAllTask().then((tasks) => setState(() {
+      _tasks = tasks;
     }));
   }
 
-  void _replaceTodo(int index, Todo newTodo) {
+  void _replaceTask(int index, Task newTask) {
     setState(() {
-      _todos[index] = newTodo;
+      _tasks[index] = newTask;
     });
-    widget.repository.saveAllTodo(_todos);
+    widget.repository.saveAllTask(_tasks);
   }
 
-  void _appendTodo(Todo newTodo) {
+  void _appendTask(Task newTask) {
     setState(() {
-      _todos.insert(0, newTodo);
+      _tasks.insert(0, newTask);
     });
-    widget.repository.saveAllTodo(_todos);
+    widget.repository.saveAllTask(_tasks);
   }
 
-  void _deleteTodo(int index) {
+  void _deleteTask(int index) {
     setState(() {
-      _todos.removeAt(index);
+      _tasks.removeAt(index);
     });
-    widget.repository.saveAllTodo(_todos);
+    widget.repository.saveAllTask(_tasks);
   }
 
-  bool _validateTodo(Todo todo) {
-    if (todo.title == '') {
+  bool _validateTask(Task task) {
+    if (task.title == '') {
       return false;
     }
     else {
@@ -55,36 +55,36 @@ class _TodoListPageState extends State<TodoListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView.builder(
-        itemCount: _todos.length,
+        itemCount: _tasks.length,
         itemBuilder: (context, index) {
-          final todo = _todos[index];
+          final task = _tasks[index];
 
           return ListTile(
-            title: (!todo.done) ? Text(todo.title) : Text(todo.title, style: TextStyle(decoration: TextDecoration.lineThrough),), // 完了したタスクには文字列に取り消し線が入る
+            title: (!task.done) ? Text(task.title) : Text(task.title, style: TextStyle(decoration: TextDecoration.lineThrough),), // 完了したタスクには文字列に取り消し線が入る
             trailing: Checkbox(
-              value: todo.done,
+              value: task.done,
               onChanged: (checked) {
-                _replaceTodo(
+                _replaceTask(
                   index,
-                  Todo(title: todo.title, done: checked ?? false),
+                  Task(title: task.title, done: checked ?? false),
                 );
-                if (!todo.done) {
-                  _todos.add(_todos.removeAt(index));
+                if (!task.done) {
+                  _tasks.add(_tasks.removeAt(index));
                 }
                 else {
-                  _todos.insert(0, _todos.removeAt(index));
+                  _tasks.insert(0, _tasks.removeAt(index));
                 }
               },
             ),
             onLongPress: () async {
-              final result = await EditDialog.show(context, todo);
+              final result = await EditDialog.show(context, task);
               if (result != null) {
-                if (result['operation'] == 'save' && _validateTodo(result['content'])) {
-                  _replaceTodo(index, result['content']);
-                  result['content'].done = todo.done; // 編集前のチェック状態を反映させる
+                if (result['operation'] == 'save' && _validateTask(result['content'])) {
+                  _replaceTask(index, result['content']);
+                  result['content'].done = task.done; // 編集前のチェック状態を反映させる
                 }
                 else if (result['operation'] == 'delete') {
-                  _deleteTodo(index);
+                  _deleteTask(index);
                 }
               }
             },
@@ -95,8 +95,8 @@ class _TodoListPageState extends State<TodoListPage> {
         child: Icon(Icons.add),
         onPressed: () async {
           final result = await EditDialog.show(context);
-          if (result != null && _validateTodo(result['content'])) {
-            _appendTodo(result['content']);
+          if (result != null && _validateTask(result['content'])) {
+            _appendTask(result['content']);
           }
         },
       ),

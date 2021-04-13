@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_todo/todo.dart';
+import 'package:flutter_todo/task.dart';
 
 class EditDialog extends StatefulWidget {
-  static Future show(BuildContext context, [Todo? base]) {
+  static Future show(BuildContext context, [Task? base]) {
     return showDialog(
       context: context,
       builder: (context) => EditDialog(base: base),
@@ -11,7 +11,7 @@ class EditDialog extends StatefulWidget {
 
   EditDialog({this.base}):super();
 
-  final Todo? base;
+  final Task? base;
 
   @override
   _EditDialogState createState() => _EditDialogState();
@@ -31,14 +31,14 @@ class _EditDialogState extends State<EditDialog> {
     return AlertDialog(
       content: TextField(
         controller: _textEditingController,
-        decoration: InputDecoration(hintText: 'TODO'),
+        decoration: InputDecoration(hintText: 'TASK'),
       ),
       actions: [
         ElevatedButton(
           onPressed: () {
             var result = Map();
             result['operation'] = 'delete';
-            result['content'] = Todo(title: '');
+            result['content'] = Task(title: '');
             Navigator.pop(
               context,
               result,
@@ -53,7 +53,7 @@ class _EditDialogState extends State<EditDialog> {
           onPressed: () {
             var result = Map();
             result['operation'] = 'save';
-            result['content'] = Todo(title: _textEditingController.text);
+            result['content'] = Task(title: _textEditingController.text);
             Navigator.pop(
               context,
               result,
