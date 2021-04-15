@@ -74,7 +74,12 @@ class _TodoListPageState extends State<TodoListPage> {
           final task = _tasks[sortedTaskIDs[index]];
 
           return ListTile(
-            title: (!task.done) ? Text(task.title) : Text(task.title, style: TextStyle(decoration: TextDecoration.lineThrough),), // 完了したタスクには文字列に取り消し線が入る
+            title: (!task.done) ? Text(task.title) : Text(task.title,
+              style: TextStyle( // 完了したタスクのスタイルを設定
+                decoration: TextDecoration.lineThrough,
+                color: Colors.grey,
+              ),
+            ),
             trailing: Checkbox(
               value: task.done,
               onChanged: (checked) {
