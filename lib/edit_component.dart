@@ -32,6 +32,7 @@ class _EditDialogState extends State<EditDialog> {
       content: TextField(
         controller: _textEditingController,
         decoration: InputDecoration(hintText: 'TASK'),
+        autofocus: true, // AlertDialog が表示されると、自動的に TextField へフォーカスされる
       ),
       actions: [
         ElevatedButton(
