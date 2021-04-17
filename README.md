@@ -1,4 +1,4 @@
-# To Do App for Flutter
+# To Do Application
 
 To Do app for Android, iOS, and web.
 
