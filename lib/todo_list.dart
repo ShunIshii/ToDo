@@ -73,34 +73,36 @@ class _TodoListPageState extends State<TodoListPage> {
         itemBuilder: (context, index) {
           final task = _tasks[sortedTaskIDs[index]];
 
-          return ListTile(
-            title: (!task.done) ? Text(task.title) : Text(task.title,
-              style: TextStyle( // 完了したタスクのスタイルを設定
-                decoration: TextDecoration.lineThrough,
-                color: Colors.grey,
+          return Card(
+              child: ListTile(
+                title: (!task.done) ? Text(task.title) : Text(task.title,
+                  style: TextStyle( // 完了したタスクのスタイルを設定
+                    decoration: TextDecoration.lineThrough,
+                    color: Colors.grey,
+                  ),
+                ),
+                trailing: Checkbox(
+                  value: task.done,
+                  onChanged: (checked) {
+                    _replaceTask(
+                      sortedTaskIDs[index],
+                      Task(title: task.title, done: checked ?? false),
+                    );
+                  },
+                ),
+                onLongPress: () async {
+                  final result = await EditDialog.show(context, task);
+                  if (result != null) {
+                    if (result['operation'] == 'save' && _validateTask(result['content'])) {
+                      _replaceTask(sortedTaskIDs[index], result['content']);
+                      result['content'].done = task.done; // 編集前のチェック状態を反映させる
+                    }
+                    else if (result['operation'] == 'delete') {
+                      _deleteTask(sortedTaskIDs[index]);
+                    }
+                  }
+                },
               ),
-            ),
-            trailing: Checkbox(
-              value: task.done,
-              onChanged: (checked) {
-                _replaceTask(
-                  sortedTaskIDs[index],
-                  Task(title: task.title, done: checked ?? false),
-                );
-              },
-            ),
-            onLongPress: () async {
-              final result = await EditDialog.show(context, task);
-              if (result != null) {
-                if (result['operation'] == 'save' && _validateTask(result['content'])) {
-                  _replaceTask(sortedTaskIDs[index], result['content']);
-                  result['content'].done = task.done; // 編集前のチェック状態を反映させる
-                }
-                else if (result['operation'] == 'delete') {
-                  _deleteTask(sortedTaskIDs[index]);
-                }
-              }
-            },
           );
         },
       ),
