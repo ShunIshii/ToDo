@@ -68,87 +68,90 @@ class _TodoListPageState extends State<TodoListPage> {
     final sortedTaskIDs = doTaskIDs + doneTaskIDs;
 
     return Scaffold(
-      body: Column(
+      body: ListView(
         children: <Widget>[
-          Expanded(
-            child: ListView.builder(
-              itemCount: doTaskIDs.length,
-              itemBuilder: (context, index) {
-                final task = _tasks[doTaskIDs[index]];
+          ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: doTaskIDs.length,
+            itemBuilder: (context, index) {
+              final task = _tasks[doTaskIDs[index]];
 
-                return Card(
-                  child: ListTile(
-                    title: (!task.done) ? Text(task.title) : Text(task.title,
-                      style: TextStyle( // 完了したタスクのスタイルを設定
-                        decoration: TextDecoration.lineThrough,
-                        color: Colors.grey,
-                      ),
+              return Card(
+                child: ListTile(
+                  title: (!task.done) ? Text(task.title) : Text(task.title,
+                    style: TextStyle( // 完了したタスクのスタイルを設定
+                      decoration: TextDecoration.lineThrough,
+                      color: Colors.grey,
                     ),
-                    trailing: Checkbox(
-                      value: task.done,
-                      onChanged: (checked) {
-                        _replaceTask(
-                          doTaskIDs[index],
-                          Task(title: task.title, done: checked ?? false),
-                        );
-                      },
-                    ),
-                    onLongPress: () async {
-                      final result = await EditDialog.show(context, task);
-                      if (result != null) {
-                        if (result['operation'] == 'save' && _validateTask(result['content'])) {
-                          _replaceTask(doTaskIDs[index], result['content']);
-                          result['content'].done = task.done; // 編集前のチェック状態を反映させる
-                        }
-                        else if (result['operation'] == 'delete') {
-                          _deleteTask(doTaskIDs[index]);
-                        }
-                      }
+                  ),
+                  trailing: Checkbox(
+                    value: task.done,
+                    onChanged: (checked) {
+                      _replaceTask(
+                        doTaskIDs[index],
+                        Task(title: task.title, done: checked ?? false),
+                      );
                     },
                   ),
-                );
-              },
-            ),
+                  onLongPress: () async {
+                    final result = await EditDialog.show(context, task);
+                    if (result != null) {
+                      if (result['operation'] == 'save' && _validateTask(result['content'])) {
+                        _replaceTask(doTaskIDs[index], result['content']);
+                        result['content'].done = task.done; // 編集前のチェック状態を反映させる
+                      }
+                      else if (result['operation'] == 'delete') {
+                        _deleteTask(doTaskIDs[index]);
+                      }
+                    }
+                  },
+                ),
+              );
+            },
           ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: doneTaskIDs.length,
-              itemBuilder: (context, index) {
-                final task = _tasks[doneTaskIDs[index]];
+          ListTile(
+            title: Text("Completed"),
+          ),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: doneTaskIDs.length,
+            itemBuilder: (context, index) {
+              final task = _tasks[doneTaskIDs[index]];
 
-                return Card(
-                  child: ListTile(
-                    title: (!task.done) ? Text(task.title) : Text(task.title,
-                      style: TextStyle( // 完了したタスクのスタイルを設定
-                        decoration: TextDecoration.lineThrough,
-                        color: Colors.grey,
-                      ),
+              return Card(
+                child: ListTile(
+                  title: (!task.done) ? Text(task.title) : Text(task.title,
+                    style: TextStyle( // 完了したタスクのスタイルを設定
+                      decoration: TextDecoration.lineThrough,
+                      color: Colors.grey,
                     ),
-                    trailing: Checkbox(
-                      value: task.done,
-                      onChanged: (checked) {
-                        _replaceTask(
-                          doneTaskIDs[index],
-                          Task(title: task.title, done: checked ?? false),
-                        );
-                      },
-                    ),
-                    onLongPress: () async {
-                      final result = await EditDialog.show(context, task);
-                      if (result != null) {
-                        if (result['operation'] == 'save' && _validateTask(result['content'])) {
-                          _replaceTask(doneTaskIDs[index], result['content']);
-                          result['content'].done = task.done; // 編集前のチェック状態を反映させる
-                        }
-                        else if (result['operation'] == 'delete') {
-                          _deleteTask(doneTaskIDs[index]);
-                        }
-                      }
+                  ),
+                  trailing: Checkbox(
+                    value: task.done,
+                    onChanged: (checked) {
+                      _replaceTask(
+                        doneTaskIDs[index],
+                        Task(title: task.title, done: checked ?? false),
+                      );
                     },
                   ),
-                );
-              },
-            ),
+                  onLongPress: () async {
+                    final result = await EditDialog.show(context, task);
+                    if (result != null) {
+                      if (result['operation'] == 'save' && _validateTask(result['content'])) {
+                        _replaceTask(doneTaskIDs[index], result['content']);
+                        result['content'].done = task.done; // 編集前のチェック状態を反映させる
+                      }
+                      else if (result['operation'] == 'delete') {
+                        _deleteTask(doneTaskIDs[index]);
+                      }
+                    }
+                  },
+                ),
+              );
+            },
           ),
         ]
       ),
